@@ -1,0 +1,35 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/styles/chat.css" />
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="/static/scripts/chat.js"></script>
+
+</head>
+<body>
+
+<div id="message-buffer-area">
+
+</div>
+
+
+<div id="nick-buffer-area">
+	<ul id="nick-buffer-list">
+
+	</ul>
+</div>
+
+<div id="input-area">
+
+    <form id="loginform" style="display: none;">
+        <input id="nickname" type="text" placeholder="nickname" value=""></input>
+        <input type="submit" value="Login"></input>
+    </form>
+
+    <form id="inputform" style="display: none;">
+        <input id="inputmsg" type="text" placeholder="Type your message here" value=""></input>
+        <input type="submit" value="Send"></input>
+    </form>
+</div>
+
+</body>
+</html>

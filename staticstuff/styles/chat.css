@@ -1,0 +1,47 @@
+
+
+
+body{
+    background-color: #353535;
+}
+
+
+
+
+#message-buffer-area
+{
+    background-color: #FF0000;
+    width: 70%;
+    height: 70%;
+    float: left;
+}
+
+
+
+
+
+
+#nick-buffer-area
+{
+    background-color: #00FF00;
+    width: 30%;
+    height: 70%;
+    float: right;
+}
+
+
+
+#input-area
+{
+    position: absolute;
+    bottom: 0;
+    background-color: #0000FF;
+    width: 95%;
+    height: 30%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+
