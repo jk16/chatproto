@@ -158,6 +158,9 @@ class ChatPageHandler(tornado.web.RequestHandler):
         self.render('chat.html')
 
 
+"""
+This handler speaks to our login button via ajax.
+"""
 class MrLogin(tornado.web.RequestHandler):
     def get(self, wildcard=None):
         global global_message_buffer
