@@ -103,7 +103,7 @@ class MessageBuffer:
 
             index = find_start_message_index()
 
-            print (index, flush=True)
+            #print (index, flush=True)
 
             #get all the messages in the cache, starting from `index`, until the end.
             next_messages = self.cache[index:]
@@ -175,7 +175,7 @@ class MrLogin(tornado.web.RequestHandler):
         #example message
         #{"type": "login", "payload": "realz", "id": 51}
 
-        print (message, flush=True)
+        #print (message, flush=True)
 
 
         #do some checking here to see if the guy should actually be allowed to login
@@ -214,6 +214,9 @@ class MrBroadcaster(tornado.web.RequestHandler):
         cursor = self.get_argument('cursor', None)
 
         global global_message_buffer
+
+        #print ('global_message_buffer.cache:', global_message_buffer.cache)
+
 
 
         #get a ticket/future
@@ -259,6 +262,7 @@ def make_app():
         ('/static/(.*)', tornado.web.StaticFileHandler, {'path': './staticstuff'})
     ]
     app = tornado.web.Application(paths, template_path='./templates', debug=True)
+    app.global_message_buffer = global_message_buffer
 
 
 
@@ -274,3 +278,7 @@ if __name__ == "__main__":
     tornado.ioloop.IOLoop.current().start()
 
     #never runs
+
+
+
+
