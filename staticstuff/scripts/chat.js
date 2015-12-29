@@ -3,6 +3,9 @@
 
 $(document).ready(function(){
     
+
+    var global_data = {}
+
     $('#loginform')
         .show()
         .on('submit', function(eventObject){
@@ -39,6 +42,9 @@ $(document).ready(function(){
                     {
                         $('#loginform').hide();
                         //.. show msg-input-form
+
+
+                        global_data['nick'] = nick;
                         
                         $('#inputform').show();
 
@@ -64,6 +70,34 @@ $(document).ready(function(){
             eventObject.preventDefault();
 
             ///TODO
+            var inputmsg = $('#inputmsg').val();
+
+
+            ///let us use a standard message format, that will generalize all client => server communications
+            var message = {type: 'chat', payload: {"author": global_data['nick'], "text": inputmsg } };
+
+            //example url: /mr.message?message=<message json>
+            $.ajax({url: '/mr.message', data: {message: JSON.stringify(message)}, dataType: 'json'})
+                .done(function(response){
+                    /*
+                     {
+                          success: boolean
+                        , msg: string
+                     }
+                     */
+
+                    if (response.success) {
+                        // nothing to do here
+                    } else {
+                        alert(response.msg);
+                    }
+
+                })
+                .fail(function(err){
+                    console.log(err);
+                    alert(err.statusText);
+                });
+
         });
 
 
@@ -81,11 +115,16 @@ $(document).ready(function(){
         ///TLDR: We got a message from the server! NOW HANDLE IT!! IN OTHER WORDS, SINCE YOU DO NOT KNOW WHAT HANDLE MEANS,
         /// $$$$ing DO SOMETHING WITH IT.
 
-        if (msg['type'] == 'login')
-        {
+        if (msg['type'] == 'login') {
             var nick = msg['payload'];
 
             $('<li>' + nick + '</li>').appendTo( $('#nick-buffer-list') );
+        } else if (msg['type'] == 'chat') {
+            var payload = msg['payload'];
+
+
+
+            $('<li>' + payload['text'] + '</li>').appendTo( $('#message-buffer-list') );
         } else {
             console.error('GOT A MESSAGE WITH UNRECOGNIZED TYPE');
         }

@@ -6,7 +6,7 @@ from tornado import gen
 from tornado.concurrent import Future
 
 import json
-
+import time
 
 
 """
@@ -258,14 +258,15 @@ class MrMessage(tornado.web.RequestHandler):
         message = self.get_argument('message')
         message = json.loads(message)
 
-        #example message: {"type": "chat", "payload": {"author": "realz", "text": "hunter2", "timestamp": 12345689} }
+        #example message: {"type": "chat", "payload": {"author": "realz", "text": "hunter2"} }
 
         message['id'] = global_message_buffer.generate_message_id()
+        message['payload']['timestamp'] = time.time()
 
         global_message_buffer.notify([message])
 
         self.set_header('Content-Type', 'text/json; charset="utf-8"')
-        
+
         autosuccess = """
 {
       "success": true
@@ -282,6 +283,7 @@ def make_app():
         ("/", ChatPageHandler),
         ("/mr.login", MrLogin),
         ("/mr.broadcaster", MrBroadcaster),
+        ("/mr.message", MrMessage),
 
         #matches url with /static/*, and looks on disk in ./staticstuff
         ('/static/(.*)', tornado.web.StaticFileHandler, {'path': './staticstuff'})
