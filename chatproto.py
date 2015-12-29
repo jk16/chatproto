@@ -141,15 +141,12 @@ class MessageBuffer:
         self.waiters = []
 
     def generate_message_id(self):
-
-
         self.last_generated_msg_id += 1
 
         return str(self.last_generated_msg_id)
 
 
 
-global_message_buffer = MessageBuffer()
 
 
 
@@ -163,13 +160,14 @@ This handler speaks to our login button via ajax.
 """
 class MrLogin(tornado.web.RequestHandler):
     def get(self, wildcard=None):
-        global global_message_buffer
+
 
         message = self.get_argument('message')
         message = json.loads(message)
         #example message
         #{"type": "login", "payload": "realz"}
 
+        global_message_buffer = self.application.global_message_buffer
         message['id'] = global_message_buffer.generate_message_id()
 
         #example message
@@ -213,11 +211,12 @@ class MrBroadcaster(tornado.web.RequestHandler):
         #id of my last message, if any
         cursor = self.get_argument('cursor', None)
 
-        global global_message_buffer
 
         #print ('global_message_buffer.cache:', global_message_buffer.cache)
 
 
+
+        global_message_buffer = self.application.global_message_buffer
 
         #get a ticket/future
         f = global_message_buffer.get_a_future_for_the_next_message(cursor)
@@ -249,6 +248,32 @@ class MrBroadcaster(tornado.web.RequestHandler):
 
 
 
+class MrMessage(tornado.web.RequestHandler):
+
+    def get(self,wildcard=None):
+        #example url to this page: /mr.message?message=<json message>
+
+        global_message_buffer = self.application.global_message_buffer
+
+        message = self.get_argument('message')
+        message = json.loads(message)
+
+        #example message: {"type": "chat", "payload": {"author": "realz", "text": "hunter2", "timestamp": 12345689} }
+
+        message['id'] = global_message_buffer.generate_message_id()
+
+        global_message_buffer.notify([message])
+
+        self.set_header('Content-Type', 'text/json; charset="utf-8"')
+        
+        autosuccess = """
+{
+      "success": true
+    , "msg": "YOU HAVE SUCCESSFULLY SENT THE MESSAGE"
+}
+"""
+        self.write(autosuccess)
+
 
 
 def make_app():
@@ -262,6 +287,10 @@ def make_app():
         ('/static/(.*)', tornado.web.StaticFileHandler, {'path': './staticstuff'})
     ]
     app = tornado.web.Application(paths, template_path='./templates', debug=True)
+
+
+    global_message_buffer = MessageBuffer()
+
     app.global_message_buffer = global_message_buffer
 
 
