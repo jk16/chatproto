@@ -123,8 +123,13 @@ $(document).ready(function(){
             var payload = msg['payload'];
 
 
+            var row = $('<tr></tr>');
 
-            $('<li>' + payload['text'] + '</li>').appendTo( $('#message-buffer-list') );
+            $('<td>' + payload['author'] + '</td>').appendTo(row);
+            $('<td>' + payload['text'] + '</td>').appendTo(row);
+
+            row.appendTo( $('#message-buffer-list') );
+
         } else {
             console.error('GOT A MESSAGE WITH UNRECOGNIZED TYPE');
         }
