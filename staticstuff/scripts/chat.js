@@ -47,6 +47,7 @@ $(document).ready(function(){
                         global_data['nick'] = nick;
                         
                         $('#inputform').show();
+                        $('#logoutform').show();
 
                     } else {
                         alert(response.msg);
@@ -103,6 +104,52 @@ $(document).ready(function(){
 
 
 
+    $('#logoutform')
+        .on('submit', function(eventObject){
+            eventObject.preventDefault();
+
+
+
+            var nick = global_data['nick'];
+
+            ///let us use a standard message format, that will generalize all client => server communications
+            var message = {type: 'logout', payload: nick};
+
+
+            /**
+             * Unescaped example of what the url will look like
+             * /mr.login?message={"type": "logout", "payload": "realz"}
+             */
+
+            $.ajax({url: '/mr.login', data: {message: JSON.stringify(message)}, dataType: 'json'})
+                .done(function(response){
+                    /*
+                     {
+                          success: boolean
+                        , msg: string
+                     }
+                     */
+
+                    if (response.success)
+                    {
+                        $('#loginform').show();
+
+
+                        global_data['nick'] = null;
+                        
+                        $('#inputform').hide();
+                        $('#logoutform').hide();
+                    } else {
+                        alert(response.msg);
+                    }
+                })
+                .fail(function(err){
+                    console.log(err);
+                    alert(err.statusText);
+                });
+
+        });
+
 
 
 
@@ -119,7 +166,14 @@ $(document).ready(function(){
         if (msg['type'] == 'login') {
             var nick = msg['payload'];
 
-            $('<li>' + nick + '</li>').appendTo( $('#nick-buffer-list') );
+            $('<li>' + nick + '</li>')
+                .attr('id', 'nick-' + nick)
+                .appendTo( $('#nick-buffer-list') );
+        } else if (msg['type'] == 'logout') {
+            var nick = msg['payload'];
+
+            $('#' + 'nick-' + nick).remove();
+
         } else if (msg['type'] == 'chat') {
             var payload = msg['payload'];
 
