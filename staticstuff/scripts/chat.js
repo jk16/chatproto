@@ -88,6 +88,7 @@ $(document).ready(function(){
 
                     if (response.success) {
                         // nothing to do here
+                        $('#inputmsg').val("");
                     } else {
                         alert(response.msg);
                     }
